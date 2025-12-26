@@ -29,14 +29,14 @@ def search_all(query, limit=20):
     url = f"{BASE_URL}/{first_letter}/{query}.json"
     params = {'includeVideos': '0'}
     
-    print(f"🌐 Sending request to: {url}")
-    print(f"📊 Parameters: {params}")
+    # print(f"🌐 Sending request to: {url}")
+    # print(f"📊 Parameters: {params}")
     
     response = requests.get(url, headers=HEADERS, params=params)
     
-    print(f"📡 Response status: {response.status_code}")
+    # print(f"📡 Response status: {response.status_code}")
     if response.status_code != 200:
-        print(f"❌ Response text: {response.text}")
+        print(f"Response text: {response.text}")
     
     response.raise_for_status()
     return response.json()
@@ -85,42 +85,44 @@ def format_results(data, limit=20):
     
     return results
 
-def main():
-    parser = argparse.ArgumentParser(description="Search IMDb by string")
-    parser.add_argument("query", help="Search query string")
-    parser.add_argument("--limit", type=int, default=10, help="Number of results")
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+# def main():
+#     parser = argparse.ArgumentParser(description="Search IMDb by string")
+#     parser.add_argument("query", help="Search query string")
+#     parser.add_argument("--limit", type=int, default=10, help="Number of results")
+#     parser.add_argument("--json", action="store_true", help="Output as JSON")
     
-    args = parser.parse_args()
+#     args = parser.parse_args()
     
-    try:
-        data = search_all(args.query, args.limit)
-        results = format_results(data, args.limit)
+#     try:
+#         data = search_all(args.query, args.limit)
+#         results = format_results(data, args.limit)
         
-        if args.json:
-            print(json.dumps(results, indent=2))
-        else:
-            print(f"\n🔍 Search results for '{args.query}':")
-            print(f"Found {len(results)} results\n")
+#         if args.json:
+#             print(json.dumps(results, indent=2))
+#         else:
+#             print(f"\n🔍 Search results for '{args.query}':")
+#             print(f"Found {len(results)} results\n")
             
-            for i, result in enumerate(results, 1):
-                if result["type"] == "Title":
-                    year_str = f" ({result['year']})" if result.get('year') else ""
-                    print(f"{i:2d}. 🎬 {result['name']}{year_str}")
-                elif result["type"] == "Person":
-                    print(f"{i:2d}. 👤 {result['name']}")
+#             for i, result in enumerate(results, 1):
+#                 if result["type"] == "Title":
+#                     year_str = f" ({result['year']})" if result.get('year') else ""
+#                     print(f"{i:2d}. 🎬 {result['name']}{year_str}")
+#                 elif result["type"] == "Person":
+#                     print(f"{i:2d}. 👤 {result['name']}")
                 
-                print(f"     ID: {result['id']}")
-                if result.get('description'):
-                    print(f"     📝 {result['description']}")
-                print(f"     📊 Rank: {result['rank']}")
-                print()
+#                 print(f"     ID: {result['id']}")
+#                 if result.get('description'):
+#                     print(f"     📝 {result['description']}")
+#                 print(f"     📊 Rank: {result['rank']}")
+#                 print()
                 
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        return 1
+#     except Exception as e:
+#         print(f"❌ Error: {e}")
+#         return 1
     
-    return 0
+#     return 0
 
-if __name__ == "__main__":
-    exit(main())
+
+data = search_all("little women")
+results = format_results(data)
+print(results)

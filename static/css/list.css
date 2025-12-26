@@ -1,0 +1,55 @@
+.results-container {
+    width: 80%;
+    max-width: 900px;
+    margin: 1.5rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+
+button.movie-card,
+button.movie-card:hover,
+button.movie-card:focus,
+button.movie-card:active {
+    border: none;
+    outline: none;
+}
+
+
+/* Individual card */
+.movie-card {
+    border-bottom: 1px solid #e5e5e5;
+    border-radius: 0;
+}
+
+/* Hover effect
+.movie-card:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+} */
+
+/* Inner content */
+.movie-card div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+/* Title */
+.movie-card div h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #585858;
+    text-transform: none;
+}
+
+/* Year */
+.movie-card div p {
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin: 0;
+    color: #585858;
+    text-transform: none;
+}

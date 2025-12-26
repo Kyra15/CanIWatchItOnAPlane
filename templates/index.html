@@ -5,6 +5,7 @@
 		<title>Can I watch it on a plane?</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="static/css/list.css" />
 		<link rel="stylesheet" href="static/css/main.css" />
 		<noscript><link rel="stylesheet" href="static/css/noscript.css" /></noscript>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -14,22 +15,39 @@
 		<div id="wrapper" style="margin-top: 2em; display: flex; justify-content: center; align-items: center; flex-direction: column">
 
 			<h1 style="margin-bottom: 0.2em;">Can I watch it on a plane?</h1>
-			<p>a website to make sure you never get jumpscared by scenes too mature for a plane ride (spoiler free!)</p>
+			<p>a website to make sure you never get jumpscared by movies too mature for a plane ride (spoiler free!)</p>
 			
 			<div id="search" style="width: 80%">
-				<form autocomplete="off" action="/search" method="get" style="display: flex; gap: 0.5rem;">
+				<form autocomplete="off" action="/search" method="post" style="display: flex; gap: 0.5rem;">
 					<input type="text" name="query" style="text-align: center" placeholder="Search for movie or TV show">
 					<!-- maybe use datalist later for autocomplete -->
         			<button type="submit" style="text-overflow: clip;"><i class="fa fa-search"></i></button>
 				</form>
 			</div>
+
+			<div class="results-container">
+				{% for movie in results_list %}
+					<button class="movie-card">
+						<div>
+							<h2>{{ movie.title }}</h2>
+							<p>({{ movie.year }})</p>
+							<p>Dir: {{ movie.dir }}</p>
+						</div>
+					</button>
+				{% endfor %}
+			</div>
+
+			{% if not results_list %}
+				<p>No results found.</p>
+			{% endif %}
+
 		</div>
 
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/util.js"></script>
-		<script src="assets/js/main.js"></script>
+		<script src="static/js/jquery.min.js"></script>
+		<script src="static/js/browser.min.js"></script>
+		<script src="static/js/breakpoints.min.js"></script>
+		<script src="static/js/util.js"></script>
+		<script src="static/js/main.js"></script>
 
     </body>
 

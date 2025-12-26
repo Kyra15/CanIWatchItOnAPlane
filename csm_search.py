@@ -1,6 +1,8 @@
 import bs4
 import requests
 import re
+import pandas as pd
+import os
 
 # search url https://www.commonsensemedia.org/search/supergirl
 
@@ -66,6 +68,10 @@ def get_info(save_dict, url):
 
     if page.status_code == 200:
         soup = bs4.BeautifulSoup(page.content, "html.parser")
+
+        date = soup.find("span", class_="detail--release-dates-theaters")
+        year = date.text.strip()[-4:]
+        save_dict.update({"year": year})
         # separate conditions if the movie is not out yet
         if len(soup.find_all("div", class_="review-view-coming-soon")) > 0:
             save_dict.update({"to_know": "This movie has yet to come out! This page will update when it does and we have more info :)"})
@@ -78,7 +84,7 @@ def get_info(save_dict, url):
             for a in to_know.find_all("a"):
                 a.replace_with(a.get_text())
             print(to_know)
-            save_dict.update({"to_know": to_know})
+            save_dict.update({"to_know": to_know.text})
 
             age = cl_search_txt(soup, "span[class^=rating__age]")
             age = age.strip()
@@ -106,7 +112,17 @@ def get_info(save_dict, url):
     return save_dict
 
 
+temp_dict = {}
 final_dict = {}
+
 urls = search("little women")
 print(urls)
-print(get_info(final_dict, list(urls)[0]))
+searched = get_info(temp_dict, list(urls)[0])
+print(searched)
+
+df = pd.DataFrame(
+    temp_dict.items(),
+    columns=["category", "content"]
+)
+
+df.to_csv("csm_search_result.csv", index=False)
