@@ -43,6 +43,7 @@ button.movie-card:active {
     margin: 0;
     color: #585858;
     text-transform: none;
+    letter-spacing: normal;
 }
 
 /* Year */

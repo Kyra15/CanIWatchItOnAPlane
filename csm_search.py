@@ -116,8 +116,8 @@ temp_dict = {}
 final_dict = {}
 
 urls = search("little women")
-print(urls)
-searched = get_info(temp_dict, list(urls)[0])
+# print(urls)
+searched = get_info(temp_dict, list(urls)[1])
 print(searched)
 
 df = pd.DataFrame(

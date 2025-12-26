@@ -27,11 +27,11 @@
 
 			<div class="results-container">
 				{% for movie in results_list %}
-					<button class="movie-card">
+					<button class="movie-card" onclick="goToTitle('{{ movie.id }}')">
 						<div>
-							<h2>{{ movie.title }}</h2>
+							<h2>{{ movie.name }}</h2>
 							<p>({{ movie.year }})</p>
-							<p>Dir: {{ movie.dir }}</p>
+							<p>({{ movie.type }})</p>
 						</div>
 					</button>
 				{% endfor %}
@@ -48,6 +48,12 @@
 		<script src="static/js/breakpoints.min.js"></script>
 		<script src="static/js/util.js"></script>
 		<script src="static/js/main.js"></script>
+
+		<script>
+			function goToTitle(id) {
+				window.location.href = `title/${id}`;
+			}
+		</script>
 
     </body>
 
