@@ -15,10 +15,10 @@
 
         <button onclick="history.back()" style="border-radius: 0px; border: none !important; box-shadow: none; text-align: left; padding-top: 1em;"><i class="fa fa-arrow-left" style="font-size: xx-large;"aria-hidden="true"></i></button>
 
-        <div id="wrapper" style="width: 90%; margin: 2em auto">
+        <div id="wrapper" style="width: 85%; margin: 2em auto; max-height: 85vh">
 
-            <div style="display: flex; gap: 4em">
-                <div class="left-column">
+            <div style="display: flex; gap: 2em; align-items: flex-start;">
+                <div class="left-column" style="align-items: flex-start;">
                     <img class="poster" src="{{ info.img }}" alt="Movie Poster">
                 </div>
 
@@ -31,19 +31,19 @@
                     
 
                     <div class="text-boxes">
-                        <div class="text-box" style="background-color: #b4cf68;">
+                        <div class="text-box" style="background-color: #b4cf68; margin-bottom: 0;">
                             <h1 style="font-size: 2.5rem; text-align: center; margin: auto;">Yes <i class="fa fa-check" aria-hidden="true"></i></h1>
                         </div>
 
-                        <div class="text-box" style="border: none">
-                            <button class="collapsible" style="padding: 0; box-shadow: none; font-family: Source Sans Pro, Helvetica, sans-serif; font-size: larger; margin: 0; width: 100%; text-align: left; height:fit-content; display: flex;">
+                        <div class="text-box" style="border: none; margin-top: 0;">
+                            <button class="collapsible" style="padding: 0.5em; box-shadow: none; font-family: Source Sans Pro, Helvetica, sans-serif; font-size: larger; margin: 0; width: 100%; text-align: left; height:fit-content; display: flex;">
                                 <h2 style="letter-spacing: normal; text-emphasis: none; text-transform: none; margin-bottom:0; flex:1">Here's why:</h2>
                                 <h2 style="flex:1; text-align: right; margin: 0;"><i class="fa fa-chevron-left arrow hidden" aria-hidden="true"></i></h2>
                             </button>  
                             <div class="coll-content">
-                                <hr style="margin-top: 1rem; margin-bottom: 0.5rem;">
-                                <p style="margin-bottom: 0.5rem;">IMDB says:</p>
-                                <p style="margin-bottom: 0.5rem;">Common Sense Media says:</p>
+                                <hr style="margin-top: 0rem; margin-bottom: 1rem;">
+                                <p style="margin-bottom: 0.75rem; padding-left: 1em; padding-right: 1em;"><strong>IMDB says:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                <p style="margin-bottom: 0.75rem; padding-left: 1em; padding-right: 1em;"><strong>Common Sense Media says:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                             </div>
                         </div>
                     </div>
