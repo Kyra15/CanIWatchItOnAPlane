@@ -20,7 +20,7 @@ def search():
 
     return render_template("index.html", results_list=results)
 
-@app.route('/title/<title_id>')
+@app.route('/<title_id>')
 def item(title_id):
     info = get_parent_guide(title_id)
     return render_template("item.html", info=info)

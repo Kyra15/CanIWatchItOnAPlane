@@ -2,10 +2,10 @@
 
 <html>
 	<head>
-		<title>Can I watch it on a plane?</title>
+		<title>Can I watch it on a plane? - {{ info.title }}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="static/css/list.css" />
+        <link rel="stylesheet" href="static/css/list.css" />
 		<link rel="stylesheet" href="static/css/main.css" />
 		<noscript><link rel="stylesheet" href="static/css/noscript.css" /></noscript>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -13,25 +13,58 @@
 
     <body>
 
-        <div class="wrapper">
-            <div class="poster">
-                <!-- <img src="poster.jpg"> -->
-            </div>
-            <div class="details">
-                <h1>Movie Name</h1>
-                <p><strong>Year:</strong> 2025</p>
-                <p><strong>Director:</strong> Jane Doe</p>
+        <button onclick="history.back()" style="border-radius: 0px; border: none !important; box-shadow: none; text-align: left; padding-top: 1em;"><i class="fa fa-arrow-left" style="font-size: xx-large;"aria-hidden="true"></i></button>
 
-                <div class="text-boxes">
-                <div class="text-box">
-                    <p>Text Box 1: Description or notes here.</p>
+        <div id="wrapper" style="width: 90%; margin: 2em auto">
+
+            <div style="display: flex; gap: 4em">
+                <div class="left-column">
+                    <img class="poster" src="{{ info.img }}" alt="Movie Poster">
                 </div>
-                <div class="text-box">
-                    <p>Text Box 2: Reviews, trivia, or other info.</p>
-                </div>
+
+                <div class="right-column">
+                    <h1 style="margin-bottom: 0.5em; text-align: center;">{{ info.title }}</h1>
+                    <div style="display: flex; gap: 2em"> 
+                        <p style="flex: 1; text-align: left; font-size: larger;">Year: {{ info.year }}</p>
+                        <p style="flex: 1; text-align: right; font-size: larger">Director(s): {{ info.directors | join(', ') }}</p>  
+                    </div>
+                    
+
+                    <div class="text-boxes">
+                        <div class="text-box" style="background-color: #b4cf68;">
+                            <h1 style="font-size: 2.5rem; text-align: center; margin: auto;">Yes <i class="fa fa-check" aria-hidden="true"></i></h1>
+                        </div>
+
+                        <div class="text-box" style="border: none">
+                            <button class="collapsible" style="padding: 0; box-shadow: none; font-family: Source Sans Pro, Helvetica, sans-serif; font-size: larger; margin: 0; width: 100%; text-align: left; height:fit-content; display: flex;">
+                                <h2 style="letter-spacing: normal; text-emphasis: none; text-transform: none; margin-bottom:0; flex:1">Here's why:</h2>
+                                <h2 style="flex:1; text-align: right; margin: 0;"><i class="fa fa-chevron-left arrow hidden" aria-hidden="true"></i></h2>
+                            </button>  
+                            <div class="coll-content">
+                                <hr style="margin-top: 1rem; margin-bottom: 0.5rem;">
+                                <p style="margin-bottom: 0.5rem;">IMDB says:</p>
+                                <p style="margin-bottom: 0.5rem;">Common Sense Media says:</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            
         </div>
+
+        <script src="static/js/jquery.min.js"></script>
+		<script src="static/js/browser.min.js"></script>
+		<script src="static/js/breakpoints.min.js"></script>
+		<script src="static/js/util.js"></script>
+		<script src="static/js/main.js"></script>
+        <script src="static/js/collapsible.js"></script>
+
+        <script>
+			function goToMain() {
+				window.location.href = `/`;
+			}
+		</script>
 
     </body>
 

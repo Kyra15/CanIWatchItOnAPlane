@@ -125,16 +125,17 @@ def get_parent_guide(movie_id):
 
         metadata = data['props']['pageProps']['contentData']['entityMetadata']
         title_data = data['props']['pageProps']['contentData']["data"]["title"]
+        # print("bleh", metadata['directorsPageTitle'])
 
         info = {
             'id': movie_id,
-            'title': metadata.get('titleText')['text'],
-            'year': metadata.get('releaseYear')['year'],
-            'img': metadata.get('primaryImage')['url'],
-            'aggregateRating': metadata.get('ratingsSummary', {})['aggregateRating'],
-            'directors': [director["name"]["nameText"]["text"] for director in metadata['directorsPageTitle'][0]["credits"]],
-            'categories': [{c["category"]["id"]: c["severity"]["text"]} for c in title_data["parentsGuide"]["categories"]],
-            'examples': [{s["category"]: s["examples"]} for s in parents_guide_examples(title_data["parentsGuide"])]
+            'title': metadata.get('titleText', {})['text'],
+            'year': metadata.get('releaseYear', {})['year'],
+            'img': (metadata.get('primaryImage') or {}).get('url', ''),
+            'aggregateRating': (metadata.get('ratingsSummary', {}) or {}).get('aggregateRating', ''),
+            'directors': [director["name"]["nameText"]["text"] for director in metadata['directorsPageTitle'][0]["credits"]] if len(metadata['directorsPageTitle']) > 0 else ["Unknown"],
+            'categories': [{(c.get("category") or {}).get("id", ""): (c.get("severity") or {}).get("text", "n/a") } for c in (title_data.get("parentsGuide") or {}).get("categories") or [] if c],
+            'examples': [{(s.get("category") or {}): s.get("examples") or ["n/a"]} for s in parents_guide_examples(title_data["parentsGuide"] or {}) if s]
         }
 
         # print("dict vals", info.values())
@@ -153,10 +154,11 @@ def save_movie_info(movie_info, filename):
     print(f"Movie info saved to {filename}")
 
 
-searched = search_all("superman")
-results = format_results(searched)
-# print(results)
+# searched = search_all("avatar the last airbender")
+# results = format_results(searched)
+# # print(results)
 
 # movie_id = results[0]["id"]
+# get_parent_guide(movie_id)
 # print("info", get_parent_guide(movie_id))
 

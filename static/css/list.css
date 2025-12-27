@@ -21,6 +21,7 @@ button.movie-card:active {
 .movie-card {
     border-bottom: 1px solid #e5e5e5;
     border-radius: 0;
+    font-family: 'Source Sans Pro', Helvetica, sans-serif;
 }
 
 /* Hover effect
@@ -53,4 +54,53 @@ button.movie-card:active {
     margin: 0;
     color: #585858;
     text-transform: none;
+}
+
+.poster {
+    width: 100%;
+    aspect-ratio: 3/4; 
+    object-fit: cover;
+    display: block;
+    border: 4px solid #585858;
+}
+
+.left-column,
+.right-column {
+    flex: 1;  
+    display: flex;
+    flex-direction: column;
+}
+
+.text-boxes {
+    gap: 2em;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.text-box {
+    border: 2px solid #585858;
+    border-radius: 10px;
+    padding: 1em
+}
+
+.hidden {
+    display: none;
+}
+
+.coll-content {
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.3s ease;
+}
+
+
+.text-box button:active {
+    background-color: transparent !important;
+}
+
+.text-box button {
+    transition: none !important;
 }
