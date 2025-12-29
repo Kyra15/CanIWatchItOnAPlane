@@ -1,12 +1,23 @@
 from flask import Flask, render_template, request
+from sentence_transformers import SentenceTransformer, util
+import re
+import torch
 from imdb_full import *
+from csm_search import *
+import os 
+from summarizer import summarize_examples
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "9e7571b29e4f280b8e76bc8cd0b99e8b26862fa5448cb8c8"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 @app.route("/")
 def template():
     return render_template("index.html")
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
@@ -22,8 +33,13 @@ def search():
 
 @app.route('/<title_id>')
 def item(title_id):
-    info = get_parent_guide(title_id)
-    return render_template("item.html", info=info)
+    imdb_info = get_parent_guide(title_id)
+    csm_str = str(imdb_info.get("title", "")) + " " + str(imdb_info.get("year", ""))
+    csm_url = csm_search(csm_str)
+    first_op = list(csm_url.keys())[0]
+    csm_info = get_info(first_op)
+    # print("hi", csm_info)
+    return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':
     app.run(port=4200, debug=True)

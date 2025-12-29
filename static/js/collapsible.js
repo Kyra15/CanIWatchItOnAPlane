@@ -25,3 +25,17 @@ for (i = 0; i < coll.length; i++) {
         }
     });
 }
+
+var verdict = document.getElementsByClassName("verdict")[0];
+console.log(verdict.childNodes[1].innerHTML)
+
+if (verdict.childNodes[1].innerHTML.includes("Yes")) {
+    verdict.style.backgroundColor = "#b4cf68"
+    verdict.childNodes[1].innerHTML = "Probably Yes <i class='fa fa-check' aria-hidden='true'></i>"
+} else if (verdict.childNodes[1].innerHTML.includes("No")) {
+    verdict.style.backgroundColor = "#e38080ff"
+    verdict.childNodes[1].innerHTML = "Probably Not <i class='fa fa-times' aria-hidden='true'></i>"
+} else {
+    verdict.style.backgroundColor = "#e8cb4c"
+     verdict.childNodes[1].innerHTML = "Maybe <i class='fa fa-question' aria-hidden='true'></i>"
+}

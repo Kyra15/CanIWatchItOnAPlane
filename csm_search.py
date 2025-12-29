@@ -6,7 +6,7 @@ import os
 
 # search url https://www.commonsensemedia.org/search/supergirl
 
-def search(phrase):
+def csm_search(phrase):
     phrase = phrase.replace(" ", "%20")
     url = "https://www.commonsensemedia.org/search/{}".format(phrase)
     # ajax: https://www.commonsensemedia.org/ajax/search/five%20nights%20at%20freddys
@@ -31,7 +31,7 @@ def search(phrase):
     movie_links = soup.find_all('a', class_="link--title", href=re.compile('^' + "/movie-reviews/"))
     tv_links = soup.find_all('a', class_="link--title", href=re.compile('^' + "/tv-reviews/"))
 
-    print(movie_links)
+    # print(movie_links)
 
     options_dict = {}
     for link in movie_links:
@@ -58,7 +58,7 @@ def cl_search_txt(soup, class_str, index = 0):
     return container[index].text
 
 
-def get_info(save_dict, url):
+def get_info(url):
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15",
@@ -71,53 +71,62 @@ def get_info(save_dict, url):
 
         date = soup.find("span", class_="detail--release-dates-theaters")
         year = date.text.strip()[-4:]
-        save_dict.update({"year": year})
         # separate conditions if the movie is not out yet
         if len(soup.find_all("div", class_="review-view-coming-soon")) > 0:
-            save_dict.update({"to_know": "This movie has yet to come out! This page will update when it does and we have more info :)"})
-            save_dict.update({"cs_age": "n/a"})
-            save_dict.update({"comm_age": "n/a"})
+            return {
+                "to_know": "This movie has yet to come out! This page will update when it does and we have more info :)",
+                "cs_age": "n/a",
+                "comm_age": "n/a",
+            }
         else:
             h1_tag = [h for h in soup.select("h3") if h.get_text(strip=True) == "Parents Need to Know"][0]
             content_div = h1_tag.find_next_sibling("div")
             to_know = content_div.find("p")
             for a in to_know.find_all("a"):
                 a.replace_with(a.get_text())
-            print(to_know)
-            save_dict.update({"to_know": to_know.text})
+            # print(to_know)
+            # save_dict.update({"to_know": to_know.text})
 
             age = cl_search_txt(soup, "span[class^=rating__age]")
             age = age.strip()
-            print("CSM age rating:", age)
+            # print("CSM age rating:", age)
 
-            non_decimal = re.compile(r'[^\d.]+')
-            cs_age = non_decimal.sub('', age)
-            save_dict.update({"cs_age": int(cs_age)})
+            cs_age = "n/a"
+            if age:
+                non_decimal = re.compile(r'[^\d.]+')
+                cs_age = non_decimal.sub('', age)
+            # save_dict.update({"cs_age": int(cs_age)})
 
+            p_age = "n/a"
             if len(soup.select("span[class^=rating__age]")) > 1:
                 p_age = cl_search_txt(soup, "span[class^=rating__age]",1)
                 p_age = p_age.strip()
-                print("Community age rating", p_age)
+                # print("Community age rating", p_age)
                 p_age = non_decimal.sub('', p_age)
-                save_dict.update({"comm_age": int(p_age)})
+                # save_dict.update({"comm_age": int(p_age)})
             
+            save_dict = {}
             subjects = ["Violence & Scariness", "Sex, Romance & Nudity", "Drinking, Drugs & Smoking"]
             for i in subjects:
                 sub_tag = [h for h in soup.select("h3") if h.get_text(strip=True) == i][0]
-                print(sub_tag)
+                print(sub_tag.text)
                 content = sub_tag.find_next_sibling("p")
                 cleaned = re.sub(r'[^a-zA-Z\s]', '', i)
                 cleaned = re.sub(r'\s+', ' ', cleaned).strip()
                 save_dict.update({cleaned.lower().replace(" ", "_"): content.text})
-    return save_dict
+    final = {"to_know": to_know.text,
+             "cs_age": cs_age,
+             "comm_age": p_age}
+    final.update(save_dict)
+    return final
 
 
 temp_dict = {}
-final_dict = {}
+# final_dict = {}
 
-urls = search("little women")
+urls = csm_search("oppenheimer")
 # print(urls)
-searched = get_info(temp_dict, list(urls)[1])
+searched = get_info(list(urls)[0])
 print(searched)
 
 df = pd.DataFrame(
