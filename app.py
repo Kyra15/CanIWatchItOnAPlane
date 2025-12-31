@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request
 from sentence_transformers import SentenceTransformer, util
-import re
-import torch
+from summarizer import summarize_examples, model, model2, final_pass, tokenizer
 from imdb_full import *
 from csm_search import *
 import os 
-from summarizer import summarize_examples
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -34,11 +32,30 @@ def search():
 @app.route('/<title_id>')
 def item(title_id):
     imdb_info = get_parent_guide(title_id)
-    csm_str = str(imdb_info.get("title", "")) + " " + str(imdb_info.get("year", ""))
-    csm_url = csm_search(csm_str)
-    first_op = list(csm_url.keys())[0]
-    csm_info = get_info(first_op)
-    # print("hi", csm_info)
+    # print(imdb_info)
+    # why isnt this getting spoiler stuff too tf
+
+    # csm_str = str(imdb_info.get("title", ""))
+    # csm_url = csm_search(csm_str)
+    # print(csm_url)
+    # first_op = list(csm_url.keys())[0]
+    # csm_info = get_info(first_op)
+    # csm_tags = ['to_know', 'violence_scariness', 'sex_romance_nudity', 'drinking_drugs_smoking']
+    # csm_formatted_str = " ".join([csm_info.get(x, "") for x in csm_tags])
+    # print("ahisdhaosidjoaisd", csm_formatted_str)
+    # need to figure out how to get year so i can confirm diff movies n stuff
+
+    imdb_str_lst = []
+    for i in imdb_info["examples"]:
+        for j in i.values():
+            imdb_str_lst.extend(j)
+    imdb_formatted_str = " ".join(imdb_str_lst)
+    # print("hello", imdb_formatted_str)
+
+    summ = summarize_examples(model, imdb_formatted_str)
+    # print("hi2345", summ)
+    final = final_pass(model2, summ)
+    print("hi", final)
     return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':

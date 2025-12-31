@@ -79,12 +79,60 @@ def format_results(data, limit=20):
     
     return results
 
+def spoiler_req(movie_id, category_id):
 
-def parents_guide_examples(data):
+    payload = {
+        "operationName": "TitleParentalGuideCategoryItems",
+        "variables": {
+            "tconst": movie_id,
+            "categoryId": category_id,
+            "first": 10,
+            "spoilers": "SPOILERS_ONLY",
+            "locale": "en-US",
+            "inIframeLinkContext": {
+                "business": "consumer",
+                "isInIframe": True,
+                "returnUrl": "https://www.imdb.com/close_me"
+            },
+            "notInIframeLinkContext": {
+                "business": "consumer",
+                "isInIframe": False,
+                "returnUrl": "https://www.imdb.com"
+            }
+        },
+        "extensions": {
+            "persistedQuery": {
+                "version": 1,
+                "sha256Hash": "ef99fff1123bdf20351dab6a3926cd3caf7b3ec91a364a708775b8bc2eda77e4"
+            }
+        }
+    }
+    
+    spo_url = "https://caching.graphql.imdb.com/"
+    spo_headers = {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'accept-language': 'en-US,en;q=0.9',
+        'origin': 'https://www.imdb.com/',
+        'referer': 'https://www.imdb.com/',
+        'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36'
+    }
+    spo_req = requests.post(spo_url, headers=spo_headers, json=payload)
+    spo_req.raise_for_status()
+    data = spo_req.json()
+
+    edges = data["data"]["title"]["parentsGuide"]["guideItems"]["edges"]
+    spoilers = [html.unescape(e["node"]["text"]["plaidHtml"]) for e in edges]
+    return spoilers
+
+
+def parents_guide_examples(data, movie_id):
     def collect(categories):
         out = {}
         for cat in categories:
             cid = cat["category"]["id"]
+            if cid != "NUDITY":
+                continue
             edges = cat.get("guideItems", {}).get("edges", [])
             out.setdefault(cid, []).extend(
                 html.unescape(e["node"]["text"]["plaidHtml"])
@@ -95,9 +143,12 @@ def parents_guide_examples(data):
 
     examples = collect(data.get("nonSpoilerCategories", []))
 
-    spoiler_examples = collect(data.get("spoilerCategories", []))
-    for cid, texts in spoiler_examples.items():
-        examples.setdefault(cid, []).extend(texts)
+    # spoiler shenanigans
+    tags = ["NUDITY"]
+
+    for i in tags:
+        examples[i] = examples[i] + spoiler_req(movie_id, i)
+    # print(examples)
 
     return [
         {
@@ -135,7 +186,7 @@ def get_parent_guide(movie_id):
             'aggregateRating': (metadata.get('ratingsSummary', {}) or {}).get('aggregateRating', ''),
             'directors': [director["name"]["nameText"]["text"] for director in metadata['directorsPageTitle'][0]["credits"]] if len(metadata['directorsPageTitle']) > 0 else ["Unknown"],
             'categories': [{(c.get("category") or {}).get("id", ""): (c.get("severity") or {}).get("text", "n/a") } for c in (title_data.get("parentsGuide") or {}).get("categories") or [] if c],
-            'examples': [{(s.get("category") or {}): s.get("examples") or ["n/a"]} for s in parents_guide_examples(title_data["parentsGuide"] or {}) if s]
+            'examples': [{(s.get("category") or {}): s.get("examples") or ["n/a"]} for s in parents_guide_examples(title_data["parentsGuide"] or {}, movie_id) if s]
         }
 
         # print("dict vals", info.values())
@@ -154,7 +205,7 @@ def save_movie_info(movie_info, filename):
     print(f"Movie info saved to {filename}")
 
 
-# searched = search_all("avatar the last airbender")
+# searched = search_all("oppenheimer")
 # results = format_results(searched)
 # # print(results)
 

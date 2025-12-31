@@ -50,10 +50,9 @@ def parents_guide_examples(data, include_spoilers=False):
 
     examples = collect(data.get("nonSpoilerCategories", []))
 
-    if include_spoilers:
-        spoiler_examples = collect(data.get("spoilerCategories", []))
-        for cid, texts in spoiler_examples.items():
-            examples.setdefault(cid, []).extend(texts)
+    spoiler_examples = collect(data.get("spoilerCategories", []))
+    for cid, texts in spoiler_examples.items():
+        examples.setdefault(cid, []).extend(texts)
 
     return [
         {
