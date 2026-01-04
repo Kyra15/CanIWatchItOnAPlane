@@ -59,7 +59,7 @@ def format_results(data, limit=20):
                 "id": item_id,
                 "name": name,
                 "year": year,
-                "type": type_of
+                "type": type_of.title(),
                 # "description": description,
                 # "image": item.get("i", {}).get("imageUrl") if item.get("i") else None
             }

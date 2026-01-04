@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request
 from sentence_transformers import SentenceTransformer, util
-from summarizer import summarize_examples, model, model2, final_pass, tokenizer
+from summarizer import summarize_examples, model, pipe, final_pass, classify
 from imdb_full import *
 from csm_search import *
 import os 
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -19,21 +21,18 @@ def favicon():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-
+    results = []
     if request.method == 'POST':
         query = request.form.get("query")
         print("user searched:", query)
 
         searched = search_all(query)
         results = format_results(searched)
-
     return render_template("index.html", results_list=results)
 
 @app.route('/<title_id>')
 def item(title_id):
     imdb_info = get_parent_guide(title_id)
-    # print(imdb_info)
-    # why isnt this getting spoiler stuff too tf
 
     # csm_str = str(imdb_info.get("title", ""))
     # csm_url = csm_search(csm_str)
@@ -54,8 +53,19 @@ def item(title_id):
 
     summ = summarize_examples(model, imdb_formatted_str)
     # print("hi2345", summ)
-    final = final_pass(model2, summ)
-    print("hi", final)
+
+    if summ == "No significant content found.":
+        imdb_info["verdict"] = "YES"
+        final = "No significant mature content found."
+        imdb_info["summary"] = final
+        return render_template("item.html", info=imdb_info)
+    
+    verdict = classify(summ, pipe)
+    imdb_info["verdict"] = verdict.strip().upper()
+    # print("verdict", verdict)
+    final = final_pass(summ, pipe)
+    # print("final", final)
+    imdb_info["summary"] = final
     return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':
