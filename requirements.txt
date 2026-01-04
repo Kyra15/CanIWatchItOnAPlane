@@ -1,0 +1,11 @@
+os
+requests
+json
+html
+re
+bs4
+flask
+sentence-transformers
+transformers
+torch
+numpy

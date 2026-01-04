@@ -1,8 +1,6 @@
 import bs4
 import requests
 import re
-import pandas as pd
-import os
 
 # search url https://www.commonsensemedia.org/search/supergirl
 
