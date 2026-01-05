@@ -1,11 +1,21 @@
 from flask import Flask, render_template, request
-from sentence_transformers import SentenceTransformer, util
-from summarizer import summarize_examples, model, pipe, final_pass, classify
+from summarizer import summarize_examples, final_pass, classify
 from imdb_full import *
 from csm_search import *
 import os 
+from sentence_transformers import SentenceTransformer, util
+from transformers import AutoTokenizer, pipeline
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
+pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
+model = SentenceTransformer(
+    "all-MiniLM-L6-v2",
+    device="cpu"
+)
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')

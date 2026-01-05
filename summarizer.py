@@ -14,8 +14,6 @@ def summarize_examples(model, text):
         "implications or appearances of sexual content"
     ]
 
-    # queries = [ "educational content about mature themes" ]
-
     def chunk_by_tokens(text, max_tokens=480):
         tokens = tokenizer(text, add_special_tokens=False)["input_ids"]
 

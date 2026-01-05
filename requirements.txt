@@ -4,3 +4,4 @@ flask
 sentence-transformers
 transformers
 numpy
+gunicorn
