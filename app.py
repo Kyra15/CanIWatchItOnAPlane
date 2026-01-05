@@ -3,29 +3,25 @@ from summarizer import summarize_examples, final_pass, classify
 from imdb_full import *
 from csm_search import *
 import os 
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, pipeline
 import torch
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+import psutil
+import os
+import threading
+import time
 
-pipe = pipeline(
-    "text-generation",
-    model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    model_kwargs={
-        "dtype": torch.float16,
-        "low_cpu_mem_usage": True,
-    },
-    device="cpu",
-    tokenizer=shared_tokenizer
-)
+def log_memory():
+    process = psutil.Process(os.getpid())
+    while True:
+        mem = process.memory_info().rss / 1024 / 1024
+        print(f"[MEMORY] {mem:.2f} MB")
+        time.sleep(5)
 
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    device="cpu"
-)
+threading.Thread(target=log_memory, daemon=True).start()
 
 
 app = Flask(__name__)
@@ -90,7 +86,25 @@ def item(title_id):
     return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':
-    app.run(port=4200, debug=True)
+    app.run(port=4200, debug=False)
+
+    shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
+    pipe = pipeline(
+        "text-generation",
+        model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        model_kwargs={
+            "dtype": torch.float16,
+            "low_cpu_mem_usage": True,
+        },
+        device="cpu",
+        tokenizer=shared_tokenizer
+    )
+
+    model = SentenceTransformer(
+        "all-MiniLM-L6-v2",
+        device="cpu"
+    )
 
 
     # use free imdb api
