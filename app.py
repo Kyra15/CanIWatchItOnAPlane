@@ -5,11 +5,22 @@ from csm_search import *
 import os 
 from sentence_transformers import SentenceTransformer, util
 from transformers import AutoTokenizer, pipeline
+import torch
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
-pipe = pipeline("text-generation", model="HuggingFaceTB/SmolLM2-1.7B-Instruct")
+shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
+pipe = pipeline(
+    "text-generation",
+    model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    model_kwargs={
+        "dtype": torch.float16,
+        "low_cpu_mem_usage": True,
+    },
+    device="cpu",
+    tokenizer=shared_tokenizer
+)
 
 model = SentenceTransformer(
     "all-MiniLM-L6-v2",
@@ -61,7 +72,7 @@ def item(title_id):
     imdb_formatted_str = " ".join(imdb_str_lst)
     # print("hello", imdb_formatted_str)
 
-    summ = summarize_examples(model, imdb_formatted_str)
+    summ = summarize_examples(model, imdb_formatted_str, shared_tokenizer)
     # print("hi2345", summ)
 
     if summ == "No significant content found.":

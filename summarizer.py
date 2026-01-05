@@ -1,14 +1,14 @@
 from sentence_transformers import SentenceTransformer, util
 from transformers import AutoTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
+# tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
 
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    device="cpu"
-)
+# model = SentenceTransformer(
+#     "all-MiniLM-L6-v2",
+#     device="cpu"
+# )
 
-def summarize_examples(model, text):
+def summarize_examples(model, text, tokenizer):
     queries = [
         "nudity",
         "implications or appearances of sexual content"
@@ -51,7 +51,7 @@ def classify(text, pipe):
     messages = [{
         "role": "user",
         "content": (
-            f"Does this text describe mature content?\n\n"
+            f"Does this text describe mature content? Light or minimal content should be classified as NO.\n\n"
             f"{text[0]}\n\n"
             f"Answer YES or NO:"
         )
@@ -81,7 +81,7 @@ def classify(text, pipe):
 
 def final_pass(text, pipe):
     if not text or text[0].strip() == "No significant content found.":
-        return "No significant content found."
+        return "No significant mature content found."
 
     messages = [
         {
