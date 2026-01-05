@@ -9,21 +9,6 @@ import torch
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-import psutil
-import os
-import threading
-import time
-
-def log_memory():
-    process = psutil.Process(os.getpid())
-    while True:
-        mem = process.memory_info().rss / 1024 / 1024
-        print(f"[MEMORY] {mem:.2f} MB")
-        time.sleep(5)
-
-threading.Thread(target=log_memory, daemon=True).start()
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 model = SentenceTransformer("all-MiniLM-L6-v2")
