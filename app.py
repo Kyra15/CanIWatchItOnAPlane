@@ -54,26 +54,13 @@ def item(title_id):
     imdb_info = get_parent_guide(title_id)
     print("hihi", imdb_info)
 
-    # csm_str = str(imdb_info.get("title", ""))
-    # csm_url = csm_search(csm_str)
-    # print(csm_url)
-    # first_op = list(csm_url.keys())[0]
-    # csm_info = get_info(first_op)
-    # csm_tags = ['to_know', 'violence_scariness', 'sex_romance_nudity', 'drinking_drugs_smoking']
-    # csm_formatted_str = " ".join([csm_info.get(x, "") for x in csm_tags])
-    # print("ahisdhaosidjoaisd", csm_formatted_str)
-    # need to figure out how to get year so i can confirm diff movies n stuff
-
     imdb_str_lst = []
-    # if imdb_info:
     for i in imdb_info["examples"]:
         for j in i.values():
             imdb_str_lst.extend(j)
     imdb_formatted_str = " ".join(imdb_str_lst)
-    # print("hello", imdb_formatted_str)
 
     summ = summarize_examples(model, imdb_formatted_str, shared_tokenizer)
-    # print("hi2345", summ)
 
     if summ == "No significant content found.":
         imdb_info["verdict"] = "YES"
@@ -83,50 +70,9 @@ def item(title_id):
     
     verdict = classify(summ, pipe)
     imdb_info["verdict"] = verdict.strip().upper()
-    # print("verdict", verdict)
     final = final_pass(summ, pipe)
-    # print("final", final)
     imdb_info["summary"] = final
     return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':
     app.run(port=4200, debug=True)
-
-    # shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-
-    # pipe = pipeline(
-    #     "text-generation",
-    #     model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    #     model_kwargs={
-    #         "dtype": torch.float16,
-    #         "low_cpu_mem_usage": True,
-    #     },
-    #     device="cpu",
-    #     tokenizer=shared_tokenizer
-    # )
-
-    # model = SentenceTransformer(
-    #     "all-MiniLM-L6-v2",
-    #     device="cpu"
-    # )
-
-
-    # use free imdb api
-    # find name based on search
-    # check attributes to get id based on name
-    # search for parents guide or use attributes wtvs there
-    # use some model to ask 
-    # if its appropriate to watch on a plane
-    # OR manually check content levels to see if bad content levels are high
-
-
-# from flask import Flask
-# # from sentence_transformers import SentenceTransformer
-
-# application = Flask(__name__)
-
-# # model = SentenceTransformer("all-MiniLM-L6-v2")
-
-# @application.route("/")
-# def hello():
-#     return "EB is running!"

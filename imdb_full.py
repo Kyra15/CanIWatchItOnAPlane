@@ -52,26 +52,13 @@ def format_results(data, limit=20):
         if type_of.lower() == "feature":
             type_of = "Movie"
         
-        # Determine if it's a title or person based on ID prefix
         if item_id.startswith("tt"):
-            # Title (movie/TV show)
             result = {
                 "id": item_id,
                 "name": name,
                 "year": year,
                 "type": type_of.title(),
-                # "description": description,
-                # "image": item.get("i", {}).get("imageUrl") if item.get("i") else None
             }
-        # elif item_id.startswith("nm"):
-        #     # Person
-        #     result = {
-        #         "type": "Person",
-        #         "id": item_id,
-        #         "name": name,
-        #         # "description": description,
-        #         # "image": item.get("i", {}).get("imageUrl") if item.get("i") else None
-        #     }
         else:
             continue
             
@@ -148,7 +135,6 @@ def parents_guide_examples(data, movie_id):
 
     for i in tags:
         examples[i] = examples[i] + spoiler_req(movie_id, i)
-    # print(examples)
 
     return [
         {
@@ -188,8 +174,6 @@ def get_parent_guide(movie_id):
             'categories': [{(c.get("category") or {}).get("id", ""): (c.get("severity") or {}).get("text", "n/a") } for c in (title_data.get("parentsGuide") or {}).get("categories") or [] if c],
             'examples': [{(s.get("category") or {}): s.get("examples") or ["n/a"]} for s in parents_guide_examples(title_data["parentsGuide"] or {}, movie_id) if s]
         }
-
-        # print("dict vals", info.values())
         
         # return info
         return info
@@ -203,13 +187,3 @@ def save_movie_info(movie_info, filename):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(movie_info, f, indent=2, ensure_ascii=False)
     print(f"Movie info saved to {filename}")
-
-
-# searched = search_all("oppenheimer")
-# results = format_results(searched)
-# # print(results)
-
-# movie_id = results[0]["id"]
-# get_parent_guide(movie_id)
-# print("info", get_parent_guide(movie_id))
-

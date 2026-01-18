@@ -2,12 +2,10 @@ import bs4
 import requests
 import re
 
-# search url https://www.commonsensemedia.org/search/supergirl
-
+# common sense media scraper NOT USED
 def csm_search(phrase):
     phrase = phrase.replace(" ", "%20")
     url = "https://www.commonsensemedia.org/search/{}".format(phrase)
-    # ajax: https://www.commonsensemedia.org/ajax/search/five%20nights%20at%20freddys
 
     ajax_url = "https://www.commonsensemedia.org/ajax/search/{}".format(phrase)
 
@@ -35,7 +33,6 @@ def csm_search(phrase):
     for link in movie_links:
         b = "https://www.commonsensemedia.org"
         name = link.text
-        # year = 
         link = link.get('href')
         url = b + link
         if url not in list(options_dict.keys()):
@@ -44,7 +41,6 @@ def csm_search(phrase):
     for link in tv_links:
         b = "https://www.commonsensemedia.org"
         name = link.text
-        # year = 
         link = link.get('href')
         url = b + link
         if url not in list(options_dict.keys()):
@@ -85,32 +81,25 @@ def get_info(url):
             to_know = content_div.find("p")
             for a in to_know.find_all("a"):
                 a.replace_with(a.get_text())
-            # print(to_know)
-            # save_dict.update({"to_know": to_know.text})
 
             age = cl_search_txt(soup, "span[class^=rating__age]")
             age = age.strip()
-            # print("CSM age rating:", age)
 
             cs_age = "n/a"
             if age:
                 non_decimal = re.compile(r'[^\d.]+')
                 cs_age = non_decimal.sub('', age)
-            # save_dict.update({"cs_age": int(cs_age)})
 
             p_age = "n/a"
             if len(soup.select("span[class^=rating__age]")) > 1:
                 p_age = cl_search_txt(soup, "span[class^=rating__age]",1)
                 p_age = p_age.strip()
-                # print("Community age rating", p_age)
                 p_age = non_decimal.sub('', p_age)
-                # save_dict.update({"comm_age": int(p_age)})
             
             save_dict = {}
             subjects = ["Violence & Scariness", "Sex, Romance & Nudity", "Drinking, Drugs & Smoking"]
             for i in subjects:
                 sub_tag = [h for h in soup.select("h3") if h.get_text(strip=True) == i][0]
-                # print(sub_tag.text)
                 content = sub_tag.find_next_sibling("p")
                 cleaned = re.sub(r'[^a-zA-Z\s]', '', i)
                 cleaned = re.sub(r'\s+', ' ', cleaned).strip()
@@ -121,19 +110,3 @@ def get_info(url):
              "comm_age": p_age}
     final.update(save_dict)
     return final
-
-
-# temp_dict = {}
-# final_dict = {}
-
-# urls = csm_search("oppenheimer")
-# # print(urls)
-# searched = get_info(list(urls)[0])
-# print(searched)
-
-# df = pd.DataFrame(
-#     temp_dict.items(),
-#     columns=["category", "content"]
-# )
-
-# df.to_csv("csm_search_result.csv", index=False)
