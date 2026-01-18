@@ -11,7 +11,24 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-model = SentenceTransformer("all-MiniLM-L6-v2")
+
+shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
+pipe = pipeline(
+    "text-generation",
+    model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    model_kwargs={
+        "dtype": torch.float16,
+        "low_cpu_mem_usage": True,
+    },
+    device="cpu",
+    tokenizer=shared_tokenizer
+)
+
+model = SentenceTransformer(
+    "all-MiniLM-L6-v2",
+    device="cpu"
+)
 
 @app.route("/")
 def template():
@@ -35,6 +52,7 @@ def search():
 @app.route('/<title_id>')
 def item(title_id):
     imdb_info = get_parent_guide(title_id)
+    print("hihi", imdb_info)
 
     # csm_str = str(imdb_info.get("title", ""))
     # csm_url = csm_search(csm_str)
@@ -47,6 +65,7 @@ def item(title_id):
     # need to figure out how to get year so i can confirm diff movies n stuff
 
     imdb_str_lst = []
+    # if imdb_info:
     for i in imdb_info["examples"]:
         for j in i.values():
             imdb_str_lst.extend(j)
@@ -71,25 +90,25 @@ def item(title_id):
     return render_template("item.html", info=imdb_info)
 
 if __name__ == '__main__':
-    app.run(port=4200, debug=False)
+    app.run(port=4200, debug=True)
 
-    shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    # shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
 
-    pipe = pipeline(
-        "text-generation",
-        model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
-        model_kwargs={
-            "dtype": torch.float16,
-            "low_cpu_mem_usage": True,
-        },
-        device="cpu",
-        tokenizer=shared_tokenizer
-    )
+    # pipe = pipeline(
+    #     "text-generation",
+    #     model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    #     model_kwargs={
+    #         "dtype": torch.float16,
+    #         "low_cpu_mem_usage": True,
+    #     },
+    #     device="cpu",
+    #     tokenizer=shared_tokenizer
+    # )
 
-    model = SentenceTransformer(
-        "all-MiniLM-L6-v2",
-        device="cpu"
-    )
+    # model = SentenceTransformer(
+    #     "all-MiniLM-L6-v2",
+    #     device="cpu"
+    # )
 
 
     # use free imdb api
@@ -97,6 +116,17 @@ if __name__ == '__main__':
     # check attributes to get id based on name
     # search for parents guide or use attributes wtvs there
     # use some model to ask 
-    # given the criteria of "apperance or implications of sex, excessive kissing, nudity" 
     # if its appropriate to watch on a plane
     # OR manually check content levels to see if bad content levels are high
+
+
+# from flask import Flask
+# # from sentence_transformers import SentenceTransformer
+
+# application = Flask(__name__)
+
+# # model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# @application.route("/")
+# def hello():
+#     return "EB is running!"

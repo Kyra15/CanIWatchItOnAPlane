@@ -76,7 +76,7 @@ def format_results(data, limit=20):
             continue
             
         results.append(result)
-    
+    print(results)
     return results
 
 def spoiler_req(movie_id, category_id):
@@ -176,7 +176,7 @@ def get_parent_guide(movie_id):
 
         metadata = data['props']['pageProps']['contentData']['entityMetadata']
         title_data = data['props']['pageProps']['contentData']["data"]["title"]
-        # print("bleh", metadata['directorsPageTitle'])
+        print("bleh", metadata)
 
         info = {
             'id': movie_id,
@@ -184,7 +184,7 @@ def get_parent_guide(movie_id):
             'year': metadata.get('releaseYear', {})['year'],
             'img': (metadata.get('primaryImage') or {}).get('url', ''),
             'aggregateRating': (metadata.get('ratingsSummary', {}) or {}).get('aggregateRating', ''),
-            'directors': [director["name"]["nameText"]["text"] for director in metadata['directorsPageTitle'][0]["credits"]] if len(metadata['directorsPageTitle']) > 0 else ["Unknown"],
+            'directors': [c["name"]["nameText"]["text"] for crew in metadata.get("crewV2", []) for c in crew.get("credits", [])] or ["Unknown"],
             'categories': [{(c.get("category") or {}).get("id", ""): (c.get("severity") or {}).get("text", "n/a") } for c in (title_data.get("parentsGuide") or {}).get("categories") or [] if c],
             'examples': [{(s.get("category") or {}): s.get("examples") or ["n/a"]} for s in parents_guide_examples(title_data["parentsGuide"] or {}, movie_id) if s]
         }
