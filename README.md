@@ -13,3 +13,7 @@ The app pulls parental guide data from IMDB, sends it to the Groq API (Llama 3.1
 1. Clone this repo
 2. Install dependencies: `pip install -r requirements.txt`
 3. Create a `.env` file with your keys:
+
+## Todo:
+- Write comments
+- Speed the summarizing process up
