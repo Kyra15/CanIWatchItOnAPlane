@@ -118,7 +118,7 @@ def parents_guide_examples(data, movie_id):
         out = {}
         for cat in categories:
             cid = cat["category"]["id"]
-            if cid != "NUDITY":
+            if cid != "VIOLENCE":
                 continue
             edges = cat.get("guideItems", {}).get("edges", [])
             out.setdefault(cid, []).extend(
@@ -131,7 +131,7 @@ def parents_guide_examples(data, movie_id):
     examples = collect(data.get("nonSpoilerCategories", []))
 
     # spoiler shenanigans
-    tags = ["NUDITY"]
+    tags = ["VIOLENCE"]
 
     for i in tags:
         examples[i] = examples[i] + spoiler_req(movie_id, i)

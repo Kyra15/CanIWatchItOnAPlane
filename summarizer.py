@@ -2,9 +2,14 @@ from sentence_transformers import SentenceTransformer, util
 from transformers import AutoTokenizer
 
 def summarize_examples(model, text, tokenizer):
+    # queries = [
+    #     "nudity",
+    #     "implications or appearances of sexual content"
+    # ]
+
     queries = [
-        "nudity",
-        "implications or appearances of sexual content"
+        "violence",
+        "mature gore"
     ]
 
     def chunk_by_tokens(text, max_tokens=480):
@@ -44,7 +49,7 @@ def classify(text, pipe):
     messages = [{
         "role": "user",
         "content": (
-            f"Does this text describe mature content? Light or minimal content should be classified as NO.\n\n"
+            f"Does this text describe violent content? Light or minimal content should be classified as NO.\n\n"
             f"{text[0]}\n\n"
             f"Answer YES or NO:"
         )
