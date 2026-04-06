@@ -1,5 +1,10 @@
 # CanIWatchItOnAPlane
 
-to do:
+## Website: https://caniwatchitonaplane.onrender.com
+
+## How it works
+
+
+
+To do:
 - write comments
-- ~~switch to groq api to either host on aws or firebase~~
