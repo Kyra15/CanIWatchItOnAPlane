@@ -1,33 +1,20 @@
 from flask import Flask, render_template, request
-from summarizer import summarize_examples, final_pass, classify
+# from summarizer import summarize_examples, final_pass, classify
 from imdb_full import *
-from csm_search import *
+# from csm_search import *
+from dotenv import load_dotenv
 import os 
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, pipeline
-import torch
+from groq import Groq
+
+load_dotenv()
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
-shared_tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
-
-pipe = pipeline(
-    "text-generation",
-    model="HuggingFaceTB/SmolLM2-1.7B-Instruct",
-    model_kwargs={
-        "dtype": torch.float16,
-        "low_cpu_mem_usage": True,
-    },
-    device="cpu",
-    tokenizer=shared_tokenizer
-)
-
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    device="cpu"
+client = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
 )
 
 @app.route("/")
@@ -51,28 +38,42 @@ def search():
 
 @app.route('/<title_id>')
 def item(title_id):
-    imdb_info = get_parent_guide(title_id)
-    print("hihi", imdb_info)
+    # imdb_info = get_parent_guide(title_id)
+    # print("hihi", imdb_info)
+    # print(get_info(title_id))
+    info = get_info(title_id)
+    print("hi", info)
 
-    imdb_str_lst = []
-    for i in imdb_info["examples"]:
-        for j in i.values():
-            imdb_str_lst.extend(j)
-    imdb_formatted_str = " ".join(imdb_str_lst)
+    summ = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": f"Using this content, extract a summary of the mature content in this. This ONLY pertains to excessively sexual or extremely gory content. It should be 3-5 sentences long and should contain no specific plot points or characters. If there is no mature content, return 'no mature content found'. Content: {info['parentguide']}",
+            }
+        ],
+        model="llama-3.1-8b-instant",
+        temperature=0,
+    )
 
-    summ = summarize_examples(model, imdb_formatted_str, shared_tokenizer)
+    print("hola", summ.choices[0].message.content)
 
-    if summ == "No significant content found.":
-        imdb_info["verdict"] = "YES"
-        final = "No significant mature content found."
-        imdb_info["summary"] = final
-        return render_template("item.html", info=imdb_info)
-    
-    verdict = classify(summ, pipe)
-    imdb_info["verdict"] = verdict.strip().upper()
-    final = final_pass(summ, pipe)
-    imdb_info["summary"] = final
-    return render_template("item.html", info=imdb_info)
+    final_summ = summ.choices[0].message.content
+    info["summary"] = final_summ
+
+    verdict = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": f"Using this summary, classify this movie as either mature or not mature. 'Mature' should only be returned when the text given includes overly-excessive mature content. Return only: mature or not mature. Summary: {final_summ}",
+            }
+        ],
+        model="llama-3.1-8b-instant",
+    )
+
+    info["verdict"] = verdict.choices[0].message.content
+    print("verdict", verdict.choices[0].message.content)
+
+    return render_template("item.html", info=info)
 
 if __name__ == '__main__':
     app.run(port=4200, debug=True)

@@ -1,8 +1,7 @@
 requests
 bs4
 flask
-sentence-transformers
-transformers
+groq
 numpy
+python-dotenv
 gunicorn
-torch
