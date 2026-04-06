@@ -1,5 +1,5 @@
 # Can I Watch It On A Plane?
-A web app for people who want to know if a movie is too mature before watching it at 30,000 feet in front of the other passengers on your plane (or anywhere, really). Search any movie, get a plain-English verdict on the mature content without spoilers.
+A web app for people who want to know if a movie is too mature before watching it at 30,000 feet in front of the other passengers on your plane (or anywhere really). Search any movie, get a plain-English verdict on the mature content without spoilers.
 
 ## How it works:
 1. Go to [caniwatchitonaplane.onrender.com](https://caniwatchitonaplane.onrender.com)
