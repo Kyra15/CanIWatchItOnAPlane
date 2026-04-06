@@ -5,3 +5,4 @@ groq
 numpy
 python-dotenv
 gunicorn
+imdbinfo

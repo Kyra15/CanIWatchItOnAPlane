@@ -4,8 +4,6 @@ from imdbinfo import search_title, get_movie, get_parental_guide
 
 import requests
 import json
-import html
-import re
 
 BASE_URL = "https://v3.sg.media-imdb.com/suggestion"
 
