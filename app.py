@@ -48,7 +48,15 @@ def item(title_id):
         messages=[
             {
                 "role": "user",
-                "content": f"Using this content, extract a summary of the mature content in this. This ONLY pertains to excessively sexual or extremely gory content. It should be 3-5 sentences long and should contain no specific plot points or characters. If there is no mature content, return 'no mature content found'. Content: {info['parentguide']}",
+                "content": f"""Using this content, extract a summary of the mature content in this. This ONLY pertains to frequent, excessively sexual or extremely gory content. It should be 3-5 sentences long and should contain no specific plot points or characters.
+                    You must respond with exactly one of the following:
+                    - A 3-5 sentence summary of the mature content. Use language suitable for a teenager.
+                    - The exact phrase: no mature content found
+                    - The exact phrase: content restricted
+
+                    Use 'content restricted' ONLY if you are unable to summarize due to the nature of the content itself. Do not use it because of missing or unclear data.
+
+                    Content: {info['parentguide']}""",
             }
         ],
         model="llama-3.1-8b-instant",
@@ -64,13 +72,20 @@ def item(title_id):
         messages=[
             {
                 "role": "user",
-                "content": f"Using this summary, classify this movie as either mature or not mature. 'Mature' should only be returned when the text given includes overly-excessive mature content. Return only: mature or not mature. Summary: {final_summ}",
+                "content": f"""Classify whether the following movie content summary is 'mature' or 'not mature'.
+
+                    'Mature' means: graphic/explicit depictions of sex, explicit nudity, or extremely gory violence.
+                    'Not mature' means: implied or non-explicit sexual content, kissing, making out, references or jokes about sex, non-graphic nudity, or mild violence.
+                    
+                    Respond only with 'mature' or 'not mature'.
+                    If the summary says 'content restricted', output 'mature'.
+                    Summary: {final_summ}""",
             }
         ],
         model="llama-3.1-8b-instant",
     )
 
-    info["verdict"] = verdict.choices[0].message.content
+    info["verdict"] = verdict.choices[0].message.content.lower()
     print("verdict", verdict.choices[0].message.content)
 
     return render_template("item.html", info=info)
